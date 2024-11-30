@@ -5,58 +5,54 @@ on:
     - cron: '0 0 * * 0'  # Run weekly
   workflow_dispatch:  # Allow manual triggers from GitHub web GUI
 
-permissions:
-  contents: write
-  id-token: write
-
 jobs:
   scan-and-fork:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Generate GitHub App token
         id: generate_token
-        env:
-          APP_ID: ${{ vars.TAVMLATEST_ADMIN_APPID }}
-          PRIVATE_KEY: ${{ secrets.TAVMLATEST_ADMIN_PKEY }}
-          INSTALLATION_ID: ${{ vars.TAVMLATEST_ADMIN_INSTALLATIONID }}
         run: |
+          echo "Debug: Checking variable and secret availability"
+          echo "APP_ID is set: ${{ vars.TAVMLATEST_ADMIN_APPID != '' }}"
+          echo "INSTALLATION_ID is set: ${{ vars.TAVMLATEST_ADMIN_INSTALLATIONID != '' }}"
+          echo "PRIVATE_KEY is set: ${{ secrets.TAVMLATEST_ADMIN_PKEY != '' }}"
+
           generate_jwt() {
             local now=$(date +%s)
-            local payload=$(echo -n "{\"iat\":$now,\"exp\":$((now + 600)),\"iss\":$APP_ID}" | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
+            local payload=$(echo -n "{\"iat\":$now,\"exp\":$((now + 600)),\"iss\":${{ vars.TAVMLATEST_ADMIN_APPID }}}" | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
             local header=$(echo -n '{"alg":"RS256","typ":"JWT"}' | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
-            local signature=$(echo -n "$header.$payload" | openssl dgst -sha256 -sign <(echo "$PRIVATE_KEY") | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
+            local signature=$(echo -n "$header.$payload" | openssl dgst -sha256 -sign <(echo "${{ secrets.TAVMLATEST_ADMIN_PKEY }}") | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
             echo "$header.$payload.$signature"
           }
-          
+
           echo "Generating JWT..."
           JWT=$(generate_jwt)
           echo "JWT generated successfully."
-          
+
           echo "Requesting token from GitHub API..."
           RESPONSE=$(curl -s -X POST \
             -H "Authorization: Bearer $JWT" \
             -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens")
-          
+            "https://api.github.com/app/installations/${{ vars.TAVMLATEST_ADMIN_INSTALLATIONID }}/access_tokens")
+
           echo "API Response: $RESPONSE"
-          
+
           TOKEN=$(echo "$RESPONSE" | jq -r .token)
-          
+
           if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
             echo "Failed to generate token. API response: $RESPONSE"
             exit 1
           fi
-          
+
           echo "Token generated successfully."
           echo "token=$TOKEN" >> $GITHUB_OUTPUT
-
-      - name: Install yq
-        run: |
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          sudo chmod a+x /usr/local/bin/yq
 
       - name: Scan Azure org for AVM repositories
         env:
@@ -68,6 +64,9 @@ jobs:
             /orgs/Azure/repos?per_page=100 \
             --jq '.[] | select(.name | test("^terraform-az(urerm|stack|ad)-avm-(res|pat)-")) | .name')
 
+          # Create config directory if it doesn't exist
+          mkdir -p config
+
           # Update the YAML file
           echo "modules:" > config/modules.yml
           for repo in $repos; do
@@ -77,23 +76,19 @@ jobs:
 
           # Commit and push changes if there are any
           git config user.name "GitHub App"
-          git config user.email "<>"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add config/modules.yml
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update AVM modules list" && git push)
 
-      - name: Fork repositories to TAVMLatest
+      - name: Fork repositories
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
         run: |
-          # Read the updated modules.yml file
-          repos=$(yq e '.modules[].repo' config/modules.yml)
+          # Read the YAML file
+          modules=$(yq eval '.modules[].repo' config/modules.yml)
 
-          for repo in $repos; do
-            # Check if fork already exists
-            if ! gh repo view "TAVMLatest/$(basename $repo)" &>/dev/null; then
-              echo "Forking $repo to TAVMLatest organization"
-              gh repo fork "$repo" --org TAVMLatest --clone=false
-            else
-              echo "Fork already exists for $repo"
-            fi
+          # Fork each repository
+          for repo in $modules; do
+            echo "Forking $repo..."
+            gh repo fork $repo --org ${{ github.repository_owner }} --clone=false || echo "Failed to fork $repo or already exists"
           done
