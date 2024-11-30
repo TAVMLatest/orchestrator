@@ -1,94 +1,64 @@
-name: Scan and Fork Azure Verified Modules
+name: Update Terraform Modules List
 
 on:
+  workflow_dispatch:  # This allows manual triggering
   schedule:
-    - cron: '0 0 * * 0'  # Run weekly
-  workflow_dispatch:  # Allow manual triggers from GitHub web GUI
+    - cron: '0 0 * * 1'  # Run every Monday at midnight UTC
 
 jobs:
-  scan-and-fork:
+  update-modules:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Generate GitHub App token
-        id: generate_token
-        run: |
-          echo "Debug: Checking variable and secret availability"
-          echo "APP_ID is set: ${{ vars.TAVMLATEST_ADMIN_APPID != '' }}"
-          echo "INSTALLATION_ID is set: ${{ vars.TAVMLATEST_ADMIN_INSTALLATIONID != '' }}"
-          echo "PRIVATE_KEY is set: ${{ secrets.TAVMLATEST_ADMIN_PKEY != '' }}"
+    - name: Setup GitHub CLI
+      uses: cli/cli@v2
 
-          generate_jwt() {
-            local now=$(date +%s)
-            local payload=$(echo -n "{\"iat\":$now,\"exp\":$((now + 600)),\"iss\":${{ vars.TAVMLATEST_ADMIN_APPID }}}" | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
-            local header=$(echo -n '{"alg":"RS256","typ":"JWT"}' | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
-            local signature=$(echo -n "$header.$payload" | openssl dgst -sha256 -sign <(echo "${{ secrets.TAVMLATEST_ADMIN_PKEY }}") | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
-            echo "$header.$payload.$signature"
-          }
+    - name: Fetch Terraform repositories and update modules.yml
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cat << EOF > update_modules.sh
+        #!/bin/bash
 
-          echo "Generating JWT..."
-          JWT=$(generate_jwt)
-          echo "JWT generated successfully."
+        fetch_all_repos() {
+            local page=1
+            while true; do
+                local batch=\$(gh api -H "Accept: application/vnd.github+json" "/orgs/Azure/repos?per_page=100&page=\$page" \
+                    --jq '.[].name')
+                if [ -z "\$batch" ]; then
+                    break
+                fi
+                echo "\$batch"
+                ((page++))
+            done
+        }
 
-          echo "Requesting token from GitHub API..."
-          RESPONSE=$(curl -s -X POST \
-            -H "Authorization: Bearer $JWT" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/app/installations/${{ vars.TAVMLATEST_ADMIN_INSTALLATIONID }}/access_tokens")
+        # Fetch all repositories
+        all_repos=\$(fetch_all_repos)
 
-          echo "API Response: $RESPONSE"
+        # Search for Terraform-related repositories
+        terraform_repos=\$(echo "\$all_repos" | grep -i "terraform-avm")
 
-          TOKEN=$(echo "$RESPONSE" | jq -r .token)
+        # Update modules.yml file
+        echo "modules:" > config/modules.yml
+        echo "\$terraform_repos" | while read repo; do
+          echo "  - name: \$repo" >> config/modules.yml
+          echo "    source: Azure/\$repo" >> config/modules.yml
+        done
 
-          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
-            echo "Failed to generate token. API response: $RESPONSE"
-            exit 1
-          fi
+        # Print summary
+        echo "Updated config/modules.yml with the following repositories:"
+        cat config/modules.yml
+        EOF
 
-          echo "Token generated successfully."
-          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+        chmod +x update_modules.sh
+        ./update_modules.sh
 
-      - name: Scan Azure org for AVM repositories
-        env:
-          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-        run: |
-          echo "Using token: ${GH_TOKEN:0:10}..."
-          # Search for repositories matching the AVM naming convention
-          repos=$(gh api -H "Accept: application/vnd.github+json" \
-            /orgs/Azure/repos?per_page=100 \
-            --jq '.[] | select(.name | test("^terraform-az(urerm|stack|ad)-avm-(res|pat)-")) | .name')
-
-          # Create config directory if it doesn't exist
-          mkdir -p config
-
-          # Update the YAML file
-          echo "modules:" > config/modules.yml
-          for repo in $repos; do
-            echo "  - name: $repo" >> config/modules.yml
-            echo "    repo: Azure/$repo" >> config/modules.yml
-          done
-
-          # Commit and push changes if there are any
-          git config user.name "GitHub App"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add config/modules.yml
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update AVM modules list" && git push)
-
-      - name: Fork repositories
-        env:
-          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-        run: |
-          # Read the YAML file
-          modules=$(yq eval '.modules[].repo' config/modules.yml)
-
-          # Fork each repository
-          for repo in $modules; do
-            echo "Forking $repo..."
-            gh repo fork $repo --org ${{ github.repository_owner }} --clone=false || echo "Failed to fork $repo or already exists"
-          done
+    - name: Commit and push if changes
+      run: |
+        git config --global user.name 'GitHub Action'
+        git config --global user.email 'action@github.com'
+        git add config/modules.yml
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Update Terraform modules list" && git push)
