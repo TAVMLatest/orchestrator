@@ -12,13 +12,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Generate token
+      - name: Generate GitHub App token
         id: generate_token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ vars.TAVMLATEST_ADMIN_APPID }}
-          private_key: ${{ secrets.TAVMLATEST_ADMIN_PKEY }}
-          installation_id: ${{ vars.TAVMLATEST_ADMIN_INSTALLATIONID }}
+        env:
+          APP_ID: ${{ vars.TAVMLATEST_ADMIN_APPID }}
+          PRIVATE_KEY: ${{ secrets.TAVMLATEST_ADMIN_PKEY }}
+          INSTALLATION_ID: ${{ vars.TAVMLATEST_ADMIN_INSTALLATIONID }}
+        run: |
+          generate_jwt() {
+            local now=$(date +%s)
+            local payload=$(echo -n "{\"iat\":$now,\"exp\":$((now + 600)),\"iss\":$APP_ID}" | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
+            local header=$(echo -n '{"alg":"RS256","typ":"JWT"}' | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
+            local signature=$(echo -n "$header.$payload" | openssl dgst -sha256 -sign <(echo "$PRIVATE_KEY") | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
+            echo "$header.$payload.$signature"
+          }
+          
+          JWT=$(generate_jwt)
+          TOKEN=$(curl -s -X POST \
+            -H "Authorization: Bearer $JWT" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens" \
+            | jq -r .token)
+          
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
 
       - name: Install yq
         run: |
