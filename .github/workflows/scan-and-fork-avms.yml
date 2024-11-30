@@ -61,7 +61,7 @@ jobs:
 
     - name: Fork repositories to TAVMLatest
       env:
-        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        GH_TOKEN: ${{ github.token }}
       run: |
         # Read the YAML file
         modules=$(yq eval '.modules[].repo' config/modules.yml)
