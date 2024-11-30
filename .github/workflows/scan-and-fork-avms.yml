@@ -19,6 +19,10 @@ jobs:
           PRIVATE_KEY: ${{ secrets.TAVMLATEST_ADMIN_PKEY }}
           INSTALLATION_ID: ${{ vars.TAVMLATEST_ADMIN_INSTALLATIONID }}
         run: |
+          echo "Debug environment variables:"
+          echo "APP_ID=$APP_ID"
+          echo "PRIVATE_KEY=$PRIVATE_KEY"
+          echo "INSTALLATION_ID=$INSTALLATION_ID"
           generate_jwt() {
             local now=$(date +%s)
             local payload=$(echo -n "{\"iat\":$now,\"exp\":$((now + 600)),\"iss\":$APP_ID}" | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
