@@ -1,64 +1,81 @@
-name: Update Terraform Modules List
+name: Scan and Fork Azure Verified Modules
 
 on:
-  workflow_dispatch:  # This allows manual triggering
   schedule:
-    - cron: '0 0 * * 1'  # Run every Monday at midnight UTC
+    - cron: '0 0 * * 0' # Run weekly
+  workflow_dispatch: # Allow manual triggers from GitHub web GUI
 
 jobs:
-  update-modules:
+  scan-and-fork:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
-    - name: Setup GitHub CLI
-      uses: cli/cli@v2
-
-    - name: Fetch Terraform repositories and update modules.yml
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Generate GitHub App token
+      id: generate_token
       run: |
-        cat << EOF > update_modules.sh
-        #!/bin/bash
+        # ... (keep the existing token generation code here)
 
+    - name: Scan Azure org for AVM repositories
+      env:
+        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+      run: |
+        echo "Using token: ${GH_TOKEN:0:10}..."
+        
         fetch_all_repos() {
-            local page=1
-            while true; do
-                local batch=\$(gh api -H "Accept: application/vnd.github+json" "/orgs/Azure/repos?per_page=100&page=\$page" \
-                    --jq '.[].name')
-                if [ -z "\$batch" ]; then
-                    break
-                fi
-                echo "\$batch"
-                ((page++))
-            done
+          local page=1
+          while true; do
+            local batch=$(gh api -H "Accept: application/vnd.github+json" "/orgs/Azure/repos?per_page=100&page=$page" \
+              --jq '.[] | select(.name | test("^terraform-az(urerm|stack|ad)-avm-(res|pat)-")) | .name')
+            if [ -z "$batch" ]; then
+              break
+            fi
+            echo "$batch"
+            ((page++))
+          done
         }
 
-        # Fetch all repositories
-        all_repos=\$(fetch_all_repos)
+        # Fetch all repositories matching the AVM naming convention
+        repos=$(fetch_all_repos)
 
-        # Search for Terraform-related repositories
-        terraform_repos=\$(echo "\$all_repos" | grep -i "terraform-avm")
+        # Create config directory if it doesn't exist
+        mkdir -p config
 
-        # Update modules.yml file
+        # Update the YAML file
         echo "modules:" > config/modules.yml
-        echo "\$terraform_repos" | while read repo; do
-          echo "  - name: \$repo" >> config/modules.yml
-          echo "    source: Azure/\$repo" >> config/modules.yml
+        echo "$repos" | while read repo; do
+          echo "  - name: $repo" >> config/modules.yml
+          echo "    repo: Azure/$repo" >> config/modules.yml
         done
 
-        # Print summary
-        echo "Updated config/modules.yml with the following repositories:"
-        cat config/modules.yml
-        EOF
-
-        chmod +x update_modules.sh
-        ./update_modules.sh
-
-    - name: Commit and push if changes
-      run: |
-        git config --global user.name 'GitHub Action'
-        git config --global user.email 'action@github.com'
+        # Commit and push changes if there are any
+        git config user.name "GitHub App"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
         git add config/modules.yml
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Update Terraform modules list" && git push)
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Update AVM modules list" && git push)
+
+    - name: Fork repositories to TAVMLatest
+      env:
+        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+      run: |
+        # Read the YAML file
+        modules=$(yq eval '.modules[].repo' config/modules.yml)
+
+        # Fork each repository to TAVMLatest
+        for repo in $modules; do
+          echo "Processing $repo..."
+          repo_name=$(basename $repo)
+          
+          # Check if the repo already exists in TAVMLatest
+          if gh repo view "TAVMLatest/$repo_name" &>/dev/null; then
+            echo "Repository $repo_name already exists in TAVMLatest. Skipping..."
+          else
+            echo "Forking $repo to TAVMLatest..."
+            gh repo fork $repo --org TAVMLatest --clone=false
+          fi
+        done
