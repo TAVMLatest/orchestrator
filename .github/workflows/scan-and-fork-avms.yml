@@ -5,6 +5,10 @@ on:
     - cron: '0 0 * * 0'  # Run weekly
   workflow_dispatch:  # Allow manual triggers from GitHub web GUI
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   scan-and-fork:
     runs-on: ubuntu-latest
@@ -19,10 +23,6 @@ jobs:
           PRIVATE_KEY: ${{ secrets.TAVMLATEST_ADMIN_PKEY }}
           INSTALLATION_ID: ${{ vars.TAVMLATEST_ADMIN_INSTALLATIONID }}
         run: |
-          echo "Debug environment variables:"
-          echo "APP_ID=$APP_ID"
-          echo "PRIVATE_KEY=$PRIVATE_KEY"
-          echo "INSTALLATION_ID=$INSTALLATION_ID"
           generate_jwt() {
             local now=$(date +%s)
             local payload=$(echo -n "{\"iat\":$now,\"exp\":$((now + 600)),\"iss\":$APP_ID}" | openssl base64 -e -A | tr '+/' '-_' | tr -d '=')
@@ -31,13 +31,26 @@ jobs:
             echo "$header.$payload.$signature"
           }
           
+          echo "Generating JWT..."
           JWT=$(generate_jwt)
-          TOKEN=$(curl -s -X POST \
+          echo "JWT generated successfully."
+          
+          echo "Requesting token from GitHub API..."
+          RESPONSE=$(curl -s -X POST \
             -H "Authorization: Bearer $JWT" \
             -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens" \
-            | jq -r .token)
+            "https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens")
           
+          echo "API Response: $RESPONSE"
+          
+          TOKEN=$(echo "$RESPONSE" | jq -r .token)
+          
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "Failed to generate token. API response: $RESPONSE"
+            exit 1
+          fi
+          
+          echo "Token generated successfully."
           echo "token=$TOKEN" >> $GITHUB_OUTPUT
 
       - name: Install yq
@@ -49,6 +62,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
         run: |
+          echo "Using token: ${GH_TOKEN:0:10}..."
           # Search for repositories matching the AVM naming convention
           repos=$(gh api -H "Accept: application/vnd.github+json" \
             /orgs/Azure/repos?per_page=100 \
