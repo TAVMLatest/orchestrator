@@ -7,12 +7,14 @@ on:
       - '.github/workflows/deploy-terraform.yml'
       - 'terraform/**'
       - 'scripts/**'
+      - 'files/**'
   pull_request:
     branches: [ main ]
     paths:
       - '.github/workflows/deploy-terraform.yml'
       - 'terraform/**'
       - 'scripts/**'
+      - 'files/**'
 
 env:
   TF_WORKING_DIR: "./terraform"
