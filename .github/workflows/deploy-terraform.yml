@@ -23,6 +23,7 @@ env:
   TF_VAR_github_app_id: ${{ vars.AVMUPGRADES_APP_ID }}
   TF_VAR_github_app_private_key: ${{ vars.AVMUPGRADES_INSTALLATION_ID }}
   TF_VAR_github_app_installation_id: ${{ secrets.AVMUPGRADES_PRIVATE_KEY }}
+  TF_VAR_organization: ${{ github.repository_owner }}
 
 permissions:
   id-token: write
@@ -45,6 +46,14 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
+      - name: Generate GitHub App JWT Token
+        id: generate_jwt
+        run: |
+          GITHUB_APP_ID=${{ vars.AVMUPGRADES_APP_ID }}
+          GITHUB_APP_PRIVATE_KEY=${{ secrets.AVMUPGRADES_PRIVATE_KEY }}
+          JWT_TOKEN=$(./scripts/generate_github_app_jwt.sh)
+          echo "TF_VAR_github_app_jwt_token=$JWT_TOKEN" >> $GITHUB_ENV
+
       - name: Azure Login
         uses: azure/login@v2.1.1
         with:
@@ -62,5 +71,5 @@ jobs:
           cat tfplan
 
       - name: Terraform Apply
-        if: false # github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve tfplan
