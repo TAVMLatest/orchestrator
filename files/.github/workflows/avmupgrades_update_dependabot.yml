@@ -26,13 +26,9 @@ jobs:
         run: |
           if [ ! -d "tests" ] || [ -z "$(ls -A tests)" ]; then
             echo "Tests folder is empty or doesn't exist. Updating dependabot.yml..."
-            yq eval 'del(.updates[] | select(.directory == "/tests" and .package-ecosystem == "gomod"))' dependabot.yml > dependabot_updated.yml
-            if ! cmp -s dependabot.yml dependabot_updated.yml; then
-              mv dependabot_updated.yml dependabot.yml
-              echo "CHANGES_MADE=true" >> $GITHUB_ENV
-            else
-              echo "No changes needed in dependabot.yml"
-            fi
+            yq eval 'del(.updates[] | select(.directory == "/tests" and .package-ecosystem == "gomod"))' .github/dependabot.yml > dependabot_updated.yml
+            mv dependabot_updated.yml .github/dependabot.yml
+            echo "CHANGES_MADE=true" >> $GITHUB_ENV
           else
             echo "Tests folder exists and is not empty. No changes needed."
           fi
@@ -49,16 +45,20 @@ jobs:
           echo "Directories found: $DIRS"
           echo $DIRS | jq -r '.[]' | while read -r dir; do
             echo "Processing directory: $dir"
-            yq e -i '.updates += {"package-ecosystem": "terraform", "directory": "'"$dir"'", "schedule": {"interval": "daily"}, "target-branch": "avmupgrades", "allow": [{"dependency-type": "all"}]}' .github/dependabot.yml
-            echo "Current state of .github/dependabot.yml:"
-            cat .github/dependabot.yml
+            if ! yq e '.updates[] | select(.directory == "'"$dir"'")' .github/dependabot.yml | grep -q .; then
+              yq e -i '.updates += {"package-ecosystem": "terraform", "directory": "'"$dir"'", "schedule": {"interval": "daily"}, "target-branch": "avmupgrades", "allow": [{"dependency-type": "all"}]}' .github/dependabot.yml
+            fi
           done
+          echo "Current state of .github/dependabot.yml:"
+          cat .github/dependabot.yml
+
+      - name: Remove duplicate entries
+        run: |
+          yq e -i '(.updates | unique_by(.directory)) as $unique | .updates = $unique' .github/dependabot.yml
 
       - name: Commit and push changes
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .github/dependabot.yml
-          git commit -m "[AVMUpgrades] Update dependabot.yml" || echo "No changes to commit"
-          git push origin main
-
+          git diff --quiet && git diff --staged --quiet || (git commit -m "[AVMUpgrades] Update dependabot.yml" && git push origin main)
