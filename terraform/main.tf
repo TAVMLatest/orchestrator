@@ -15,7 +15,7 @@ resource "null_resource" "create_forks" {
     command = <<EOT
       curl -X POST -H "Authorization: Bearer ${var.github_app_jwt_token}" \
       -H "Accept: application/vnd.github.v3+json" \
-      https://api.github.com/repos/Azure/${each.value.source_repo}/forks \
+      https://api.github.com/repos/Azure/${each.value.repo}/forks \
       -d '{"organization": "${var.organization}"}'
     EOT
   }
