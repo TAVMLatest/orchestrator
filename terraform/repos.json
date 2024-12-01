@@ -1,0 +1,542 @@
+[
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-dataprotection-backupvault"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-batch-batchaccount"
+  },
+  {
+    "description": "Terraform module to deploy policies in Azure and assign them",
+    "name": "terraform-azurerm-avm-ptn-policyassignment"
+  },
+  {
+    "description": "AVM Pattern module for Oracle Database @ Azure deployment",
+    "name": "terraform-azurerm-avm-ptn-odaa"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-ptn-azuremonitorwindowsagent"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-documentdb-databaseaccount"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-ptn-function-app-storage-private-endpoints"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-synapse-workspace"
+  },
+  {
+    "description": "To gain access, please finish setting up this repository now at: ",
+    "name": "terraform-azurerm-avm-res-loadtestservice-loadtest"
+  },
+  {
+    "description": "Public SSH Key AVM module",
+    "name": "terraform-azurerm-avm-res-compute-sshpublickey"
+  },
+  {
+    "description": "terraform avm module for resource site manager",
+    "name": "terraform-azurerm-avm-res-edge-site"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-hybridcontainerservice-provisionedclusterinstance"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-ptn-odaa-identity"
+  },
+  {
+    "description": "Azure Verified Module for Azure Disk",
+    "name": "terraform-azurerm-avm-res-compute-disk"
+  },
+  {
+    "description": "Front Door Web Application Firewall (WAF) Policy",
+    "name": "terraform-azurerm-avm-res-network-frontdoorwebapplicationfirewallpolicy"
+  },
+  {
+    "description": "Azure Verified Terraform Module for route server resource",
+    "name": "terraform-azurerm-avm-res-network-routeserver"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-appconfiguration-configurationstore"
+  },
+  {
+    "description": "AVM Terraform module for logic app workflow",
+    "name": "terraform-azurerm-avm-res-logic-workflow"
+  },
+  {
+    "description": "AVM Terraform Module for Bot Service",
+    "name": "terraform-azurerm-avm-res-botservice-botservice"
+  },
+  {
+    "description": "This is the AVM respository for the route server resource.",
+    "name": "terraform-azurerm-avm-ptn-network-routeserver"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-sql-server"
+  },
+  {
+    "description": "DDoS protection plan AVM module",
+    "name": "terraform-azurerm-avm-res-network-ddosprotectionplan"
+  },
+  {
+    "description": "Azure Verified Module for AKS",
+    "name": "terraform-azurerm-avm-res-containerservice-managedcluster"
+  },
+  {
+    "description": "AVM Pattern Module to use Azure Site Recovery to replicate Virtual Machines at Scale between locations",
+    "name": "terraform-azurerm-avm-ptn-bcdr-vm-replication"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-kusto-cluster"
+  },
+  {
+    "description": "A terraform pattern to deploy the https://azure.github.io/ipam/#/ container as a web app with supporting resources.",
+    "name": "terraform-azurerm-avm-ptn-azure-ipam"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-eventhub-namespace"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-search-searchservice"
+  },
+  {
+    "description": "Azure Verified Module for Azure Red Hat OpenShift",
+    "name": "terraform-azurerm-avm-res-redhatopenshift-openshiftcluster"
+  },
+  {
+    "description": "This repo will hold the Terraform version of the Azure Verified Module for Azure VMware Solution.",
+    "name": "terraform-azurerm-avm-res-avs-privatecloud"
+  },
+  {
+    "description": "AVM Module Repo for Azure ACI",
+    "name": "terraform-azurerm-avm-res-containerinstance-containergroup"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-azurestackhci-virtualmachineinstance"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-azurestackhci-logicalnetwork"
+  },
+  {
+    "description": "To gain access, please finish setting up this repository now at: ",
+    "name": "terraform-azurerm-avm-res-network-applicationsecuritygroup"
+  },
+  {
+    "description": "Azure Network Manager AVM Module",
+    "name": "terraform-azurerm-avm-res-network-networkmanager"
+  },
+  {
+    "description": "Repository for the AVM - Azure Vnet Peering module",
+    "name": "terraform-azurerm-avm-ptn-virtualnetworkpeering"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-web-hostingenvironment"
+  },
+  {
+    "description": "To gain access, please finish setting up this repository now at: ",
+    "name": "terraform-azurerm-avm-res-cache-redis"
+  },
+  {
+    "description": "AVM Terraform Module for Desktop Virtualization Workspace",
+    "name": "terraform-azurerm-avm-res-desktopvirtualization-workspace"
+  },
+  {
+    "description": "Azure Firewall AVM Module",
+    "name": "terraform-azurerm-avm-res-network-azurefirewall"
+  },
+  {
+    "description": "AVM Terraform module for role assignments",
+    "name": "terraform-azurerm-avm-res-authorization-roleassignment"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-servicebus-namespace"
+  },
+  {
+    "description": "The AVM pattern module to deploy all the required private link private DNS zones for supported services. ",
+    "name": "terraform-azurerm-avm-ptn-network-private-link-private-dns-zones"
+  },
+  {
+    "description": "AVM Terraform Pattern Module for ALZ Management.",
+    "name": "terraform-azurerm-avm-ptn-alz-management"
+  },
+  {
+    "description": "To gain access, please finish setting up this repository now at: ",
+    "name": "terraform-azurerm-avm-res-managedidentity-userassignedidentity"
+  },
+  {
+    "description": "AVM Terraform module for azure static web apps",
+    "name": "terraform-azurerm-avm-res-web-staticsite"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-web-serverfarm"
+  },
+  {
+    "description": "Repository for 'Public IP address' AVM module",
+    "name": "terraform-azurerm-avm-res-network-publicipaddress"
+  },
+  {
+    "description": "Azure Firewall Policy AVM Module",
+    "name": "terraform-azurerm-avm-res-network-firewallpolicy"
+  },
+  {
+    "description": "Terraform Module for Nat Gateway",
+    "name": "terraform-azurerm-avm-res-network-natgateway"
+  },
+  {
+    "description": "Azure Virtual Desktop Landing Zone Accelerator Management Plane",
+    "name": "terraform-azurerm-avm-ptn-avd-lza-managementplane"
+  },
+  {
+    "description": "AVM Terraform Module for Application Insights",
+    "name": "terraform-azurerm-avm-res-insights-component"
+  },
+  {
+    "description": "Azure Application Gateway serves as a web traffic load balancer, allowing you to efficiently handle traffic for your web applications. This Terraform module is designed for the rapid creation of an Application Gateway that includes various customizable features. ",
+    "name": "terraform-azurerm-avm-res-network-applicationgateway"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-databricks-workspace"
+  },
+  {
+    "description": "Azure Verified Module for Bastion Host",
+    "name": "terraform-azurerm-avm-res-network-bastionhost"
+  },
+  {
+    "description": "AVM Terraform Module for Network Security Group",
+    "name": "terraform-azurerm-avm-res-network-networksecuritygroup"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-compute-virtualmachinescaleset"
+  },
+  {
+    "description": "Azure Verified Module for Azure Managed DevOps Pool",
+    "name": "terraform-azurerm-avm-res-devopsinfrastructure-pool"
+  },
+  {
+    "description": "AVM Module for Azure Machine learning workspaces.",
+    "name": "terraform-azurerm-avm-res-machinelearningservices-workspace"
+  },
+  {
+    "description": "To gain access, please finish setting up this repository now at: ",
+    "name": "terraform-azurerm-avm-res-resources-resourcegroup"
+  },
+  {
+    "description": "Terraform AVM module for Private DNS zones",
+    "name": "terraform-azurerm-avm-res-network-privatednszone"
+  },
+  {
+    "description": "AVM Terraform Pattern Module for Virtual Network Gateway ",
+    "name": "terraform-azurerm-avm-ptn-vnetgateway"
+  },
+  {
+    "description": "This Terraform module is designed to manage Azure Cognitive Services. It provides a comprehensive set of variables and resources to configure and deploy Cognitive Services in Azure.",
+    "name": "terraform-azurerm-avm-res-cognitiveservices-account"
+  },
+  {
+    "description": "Azure Verified Module for Azure DevOps Agents and GitHub Runners",
+    "name": "terraform-azurerm-avm-ptn-cicd-agents-and-runners"
+  },
+  {
+    "description": "Azure Log Analytics Workspace AVM Module",
+    "name": "terraform-azurerm-avm-res-operationalinsights-workspace"
+  },
+  {
+    "description": "AVM Terraform module for Module 'avm-res-containerregistry-registry'",
+    "name": "terraform-azurerm-avm-res-containerregistry-registry"
+  },
+  {
+    "description": "This is the Production Standard for AKS pattern module for Azure Verified Modules (AVM) library. This module deploys a production standard AKS cluster along with supporting a Virtual Network and Azure container registry. It provisions an environment sufficient for most production deployments for AKS. ",
+    "name": "terraform-azurerm-avm-ptn-aks-production"
+  },
+  {
+    "description": "Terraform AVM module for virtual machines",
+    "name": "terraform-azurerm-avm-res-compute-virtualmachine"
+  },
+  {
+    "description": "Azure Verified Module for Virtual Network",
+    "name": "terraform-azurerm-avm-res-network-virtualnetwork"
+  },
+  {
+    "description": "Terraform module to deploy Azure Landing Zones",
+    "name": "terraform-azurerm-avm-ptn-alz"
+  },
+  {
+    "description": "Azure Verified Module for Key Vault",
+    "name": "terraform-azurerm-avm-res-keyvault-vault"
+  },
+  {
+    "description": "AVM Terraform module for Container Apps Managed Environments",
+    "name": "terraform-azurerm-avm-res-app-managedenvironment"
+  },
+  {
+    "description": "AVM Terraform module for Local Network Gateway",
+    "name": "terraform-azurerm-avm-res-network-localnetworkgateway"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-azurestackhci-cluster"
+  },
+  {
+    "description": "This Terraform module is designed to create Azure Storage Accounts and its related resources, including blob containers, queues, tables, and file shares. It also supports the creation of a storage account private endpoint which provides secure and direct connectivity to Azure Storage over a private network.",
+    "name": "terraform-azurerm-avm-res-storage-storageaccount"
+  },
+  {
+    "description": "The Azure Verified Module for the Virtual WAN Pattern",
+    "name": "terraform-azurerm-avm-ptn-virtualwan"
+  },
+  {
+    "description": "Azure Verified Module for the Multi-hub networking pattern",
+    "name": "terraform-azurerm-avm-ptn-hubnetworking"
+  },
+  {
+    "description": "AVM Terraform module for ExpressRoute Circuits.",
+    "name": "terraform-azurerm-avm-res-network-expressroutecircuit"
+  },
+  {
+    "description": "AVM for Azure Virtual Desktop Insights",
+    "name": "terraform-azurerm-avm-ptn-avd-lza-insights"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-web-site"
+  },
+  {
+    "description": "AVM Terraform module for Azure Container Apps",
+    "name": "terraform-azurerm-avm-res-app-containerapp"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-dbforpostgresql-flexibleserver"
+  },
+  {
+    "description": "AVM Terraform module for Gallery Image",
+    "name": "terraform-avm-azurerm-res-compute-galleryimage"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-ptn-hci-server-provisioner"
+  },
+  {
+    "description": "AVM Terraform module for Gallery Application",
+    "name": "terraform-avm-res-compute-galleryapplication"
+  },
+  {
+    "description": "Template repo for Azure Verified Modules using Terraform",
+    "name": "terraform-azurerm-avm-template"
+  },
+  {
+    "description": "This module provides autoscaling configuration for VMSS, App Services and other scalable resources.",
+    "name": "terraform-azurerm-avm-res-insights-autoscalesetting"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-compute-proximityplacementgroup"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-network-networkinterface"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-compute-image"
+  },
+  {
+    "description": "terraform-azurerm-avm-res-recoveryservices-vault",
+    "name": "terraform-azurerm-avm-res-recoveryservices-vault"
+  },
+  {
+    "description": "Azure Network Watcher AVM Module",
+    "name": "terraform-azurerm-avm-res-network-networkwatcher"
+  },
+  {
+    "description": "AVM Terraform Module for Azure CDN Profiles",
+    "name": "terraform-azurerm-avm-res-cdn-profile"
+  },
+  {
+    "description": "AVM Terraform module for private DNS resolver",
+    "name": "terraform-azurerm-avm-res-network-dnsresolver"
+  },
+  {
+    "description": "AVM for Desktop Virtualization Application group",
+    "name": "terraform-azurerm-avm-res-desktopvirtualization-applicationgroup"
+  },
+  {
+    "description": "AVM for Desktop Virtualization Hostpools",
+    "name": "terraform-azurerm-avm-res-desktopvirtualization-hostpool"
+  },
+  {
+    "description": "AVM Terraform module for Azure portal dashboard.",
+    "name": "terraform-azurerm-avm-res-portal-dashboard"
+  },
+  {
+    "description": "AVM Module for Compute Host groups, also known as Dedicated Host Groups",
+    "name": "terraform-azurerm-avm-res-compute-hostgroup"
+  },
+  {
+    "description": "This is the Production Economy Standard for AKS pattern module for Azure Verified Modules (AVM) library. This module deploys a production economy standard AKS cluster along with supporting a Virtual Network and Azure container registry. It provisions an environment sufficient for most production economy deployments for AKS.",
+    "name": "terraform-azurerm-avm-ptn-aks-economy"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-network-loadbalancer"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-network-routetable"
+  },
+  {
+    "description": "AVM for Desktop Virtualization Scaling Plans",
+    "name": "terraform-azurerm-avm-res-desktopvirtualization-scalingplan"
+  },
+  {
+    "description": "Azure Verified Module for Oracle Exadata VM Cluster",
+    "name": "terraform-azurerm-avm-res-oracledatabase-cloudvmcluster"
+  },
+  {
+    "description": "Azure Verified Module for Oracle Exadata Infrastructure",
+    "name": "terraform-azurerm-avm-res-oracledatabase-cloudexadatainfrastructure"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-netapp-netappaccount"
+  },
+  {
+    "description": "Re-publish of Azure/terraform-azurerm-regions made official as AVM",
+    "name": "terraform-azurerm-avm-utl-regions"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-sql-managedinstance"
+  },
+  {
+    "description": "This is the Production Enterprise Standard for AKS pattern module for Azure Verified Modules (AVM) library. This module deploys a production enterprise standard AKS cluster along with supporting a Virtual Network and Azure container registry. It provisions an environment sufficient for most production enterprise deployments for AKS.",
+    "name": "terraform-azurerm-avm-ptn-aks-enterprise"
+  },
+  {
+    "description": "AVM Terraform module for  Email Communication Service",
+    "name": "terraform-azurerm-avm-res-communication-emailservice"
+  },
+  {
+    "description": "AVM Terraform module for Data collectionEndpoint",
+    "name": "terraform-azurerm-avm-res-insights-datacollectionendpoint"
+  },
+  {
+    "description": "AVM Terraform module for private endpoint",
+    "name": "terraform-azurerm-avm-res-network-privateendpoint"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-test2"
+  },
+  {
+    "description": "AVM Resource Module for Application Gateway Web Application Firewall (WAF) Policy",
+    "name": "terraform-azurerm-avm-res-network-applicationgatewaywebapplicationfirewallpolicy"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-resourcegraph-query"
+  },
+  {
+    "description": "AVM Terraform module for Disk Encryption Set",
+    "name": "terraform-azurerm-avm-res-compute-diskencryptionset"
+  },
+  {
+    "description": "This is the Dev/Test Standard for AKS pattern module for Azure Verified Modules (AVM) library. This module deploys a dev/test standard AKS cluster along with supporting a Virtual Network and Azure container registry. It provisions an environment sufficient for most dev/test deployments for AKS.",
+    "name": "terraform-azurerm-avm-ptn-aks-dev"
+  },
+  {
+    "description": "AVM Terraform resource module for network connections",
+    "name": "terraform-azurerm-avm-res-network-connection"
+  },
+  {
+    "description": "AVM Terraform Resource Module for API Connection",
+    "name": "terraform-azurerm-avm-res-web-connection"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-insights-logprofile"
+  },
+  {
+    "description": "The concept of this pattern module is to make it easier for workload teams, given a vnet by the platform team, to be able to create resource networking.",
+    "name": "terraform-azurerm-avm-ptn-subnets-nsgs-routes"
+  },
+  {
+    "description": "AVM Terraform Module for DNS Zone",
+    "name": "terraform-azurerm-avm-res-network-dnszone"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-test-repo4"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-auto-test2"
+  },
+  {
+    "description": "Azure Verified Modules DevCenter Terraform Module",
+    "name": "terraform-azurerm-avm-res-devcenter-devcenter"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-test-repo3"
+  },
+  {
+    "description": "Azure Verified Module for Bootstrapping Azure resources for CI / CD pipelines.",
+    "name": "terraform-azurerm-avm-ptn-cicd-bootstrap"
+  },
+  {
+    "description": "AVM Terraform Rule for DataCollection Rulesets",
+    "name": "terraform-azurerm-avm-res-insights-datacollectionrule"
+  },
+  {
+    "description": "AVM Terraform Module  for DNS Forwarding rulesets",
+    "name": "terraform-azurerm-avm-res-network-dnsforwardingrulesets-forwardingrules"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-test-repo2"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-dbformysql-flexibleserver"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-ptn-hci-ad-provisioner"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-test-repo7"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-test-repo6"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-test-repo5"
+  },
+  {
+    "description": "",
+    "name": "terraform-azurerm-avm-res-sqlvirtualmachine-sqlvirtualmachine"
+  }
+]
