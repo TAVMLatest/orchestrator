@@ -1,12 +1,5 @@
-resource "null_resource" "generate_repos_json" {
-  provisioner "local-exec" {
-    command = "./scripts/populate_repos_json.sh"
-  }
-}
-
 data "local_file" "repos" {
   filename = "repos.json"
-  depends_on = [null_resource.generate_repos_json]
 }
 
 locals {

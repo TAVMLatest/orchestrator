@@ -57,6 +57,9 @@ jobs:
           GITHUB_APP_PRIVATE_KEY: ${{ secrets.AVMUPGRADES_PRIVATE_KEY }}
           GITHUB_APP_INSTALLATION_ID: ${{ vars.AVMUPGRADES_INSTALLATION_ID }}
 
+      - name: Run populate_repos_json.sh
+        run: ./scripts/populate_repos_json.sh
+
       - name: Azure Login
         uses: azure/login@v2.1.1
         with:
