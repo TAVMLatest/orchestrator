@@ -26,7 +26,7 @@ jobs:
         run: |
           if [ ! -d "tests" ] || [ -z "$(ls -A tests)" ]; then
             echo "Tests folder is empty or doesn't exist. Updating dependabot.yml..."
-            yq eval 'del(.updates[] | select(.directory == "/tests" and .package-ecosystem == "gomod"))' .github/dependabot.yml > dependabot_updated.yml
+            yq eval 'del(.updates[] | select(.directory == "/tests"))' .github/dependabot.yml > dependabot_updated.yml
             mv dependabot_updated.yml .github/dependabot.yml
             echo "CHANGES_MADE=true" >> $GITHUB_ENV
           else
@@ -49,12 +49,10 @@ jobs:
               yq e -i '.updates += {"package-ecosystem": "terraform", "directory": "'"$dir"'", "schedule": {"interval": "daily"}, "target-branch": "avmupgrades", "allow": [{"dependency-type": "all"}]}' .github/dependabot.yml
             fi
           done
-          echo "Current state of .github/dependabot.yml:"
-          cat .github/dependabot.yml
 
-      - name: Remove duplicate entries
+      - name: Remove duplicate entries and sort
         run: |
-          yq e -i '(.updates | unique_by(.directory)) as $unique | .updates = $unique' .github/dependabot.yml
+          yq e -i '(.updates | unique_by(.directory) | sort_by(.directory)) as $unique | .updates = $unique' .github/dependabot.yml
 
       - name: Commit and push changes
         run: |
