@@ -1,0 +1,54 @@
+name: AVMUpgrades - Updates to Main Branch
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 1'  # Run weekly on Monday at 00:00 UTC
+
+jobs:
+  update-main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update dependabot.yml
+        run: |
+          cat >> .github/dependabot.yml << EOL
+          - package-ecosystem: "terraform"
+            directory: "/"
+            schedule:
+              interval: "daily"
+            target-branch: "avmupgrades"
+            allow:
+              - dependency-type: "all"
+          EOL
+
+      - name: Find examples directories
+        id: find_dirs
+        run: |
+          DIRS=$(find ./examples -type d -mindepth 1 -maxdepth 1 | jq -R -s -c 'split("\n")[:-1]')
+          echo "dirs=$DIRS" >> $GITHUB_OUTPUT
+
+      - name: Update dependabot.yml with example directories
+        run: |
+          DIRS='${{ steps.find_dirs.outputs.dirs }}'
+          for dir in $(echo $DIRS | jq -r '.[]'); do
+            echo "- package-ecosystem: \"terraform\"" >> .github/dependabot.yml
+            echo "  directory: \"$dir\"" >> .github/dependabot.yml
+            echo "  schedule:" >> .github/dependabot.yml
+            echo "    interval: \"daily\"" >> .github/dependabot.yml
+            echo "  target-branch: \"avmupgrades\"" >> .github/dependabot.yml
+            echo "  allow:" >> .github/dependabot.yml
+            echo "    - dependency-type: \"all\"" >> .github/dependabot.yml
+          done
+
+      - name: Commit and push changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .github/dependabot.yml
+          git commit -m "[AVMUpgrades] Update dependabot.yml" || echo "No changes to commit"
+          git push origin main

@@ -20,10 +20,3 @@ resource "null_resource" "create_forks" {
   }
 }
 
-data "github_repository" "forks" {
-  for_each = local.repos
-
-  full_name = "${var.organization}/${each.value.name}"
-
-  depends_on = [ null_resource.create_forks ]
-}
