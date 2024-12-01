@@ -12,7 +12,7 @@ resource "null_resource" "create_forks" {
   for_each = local.repos
 
   provisioner "local-exec" {
-    command = "scripts/create_fork.sh ${each.value.name}"
+    command = "../scripts/create_fork.sh ${each.value.name}"
 
     environment = {
       GITHUB_APP_JWT_TOKEN = var.github_app_jwt_token
