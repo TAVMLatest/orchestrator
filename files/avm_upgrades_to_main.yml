@@ -19,9 +19,13 @@ jobs:
           sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod a+x /usr/local/bin/yq
 
-      - name: Update dependabot.yml
+      - name: Update dependabot.yml with example directories
         run: |
-          yq e -i '.updates += [{"package-ecosystem": "terraform", "directory": "/", "schedule": {"interval": "daily"}, "target-branch": "avmupgrades", "allow": [{"dependency-type": "all"}]}]' .github/dependabot.yml
+          DIRS='${{ steps.find_dirs.outputs.dirs }}'
+          echo $DIRS | jq -r '.[]' | while read dir; do
+            export dir
+            yq e -i '.updates += {"package-ecosystem": "terraform", "directory": strenv(dir), "schedule": {"interval": "daily"}, "target-branch": "avmupgrades", "allow": [{"dependency-type": "all"}]}' .github/dependabot.yml
+          done
 
       - name: Find examples directories
         id: find_dirs
