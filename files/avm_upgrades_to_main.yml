@@ -39,13 +39,13 @@ jobs:
         run: |
           DIRS='${{ steps.find_dirs.outputs.dirs }}'
           for dir in $(echo $DIRS | jq -r '.[]'); do
-            echo "- package-ecosystem: \"terraform\"" >> .github/dependabot.yml
-            echo "  directory: \"$dir\"" >> .github/dependabot.yml
-            echo "  schedule:" >> .github/dependabot.yml
-            echo "    interval: \"daily\"" >> .github/dependabot.yml
-            echo "  target-branch: \"avmupgrades\"" >> .github/dependabot.yml
-            echo "  allow:" >> .github/dependabot.yml
-            echo "    - dependency-type: \"all\"" >> .github/dependabot.yml
+            echo "  - package-ecosystem: \"terraform\"" >> .github/dependabot.yml
+            echo "    directory: \"$dir\"" >> .github/dependabot.yml
+            echo "    schedule:" >> .github/dependabot.yml
+            echo "      interval: \"daily\"" >> .github/dependabot.yml
+            echo "    target-branch: \"avmupgrades\"" >> .github/dependabot.yml
+            echo "    allow:" >> .github/dependabot.yml
+            echo "      - dependency-type: \"all\"" >> .github/dependabot.yml
           done
 
       - name: Commit and push changes
