@@ -12,5 +12,6 @@ terraform {
 
 # Authenticate with GitHub using a GitHub App and environment variables
 provider "github" {
+  app_auth {}
 }
 
