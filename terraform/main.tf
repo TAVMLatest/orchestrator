@@ -12,12 +12,11 @@ resource "null_resource" "create_forks" {
   for_each = local.repos
 
   provisioner "local-exec" {
-    command = <<EOT
-      curl -X POST -H "Authorization: Bearer ${var.github_app_jwt_token}" \
-      -H "Accept: application/vnd.github.v3+json" \
-      https://api.github.com/repos/Azure/${each.value.repo}/forks \
-      -d '{"organization": "${var.organization}"}'
-    EOT
+    command = "scripts/create_fork.sh ${each.value.name}"
+
+    environment = {
+      GITHUB_APP_JWT_TOKEN = var.github_app_jwt_token
+    }
   }
 }
 
