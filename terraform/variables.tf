@@ -27,14 +27,3 @@ variable "github_app_pkey" {
   description = "GitHub App Private Key"
   type        = string
 }
-
-variable "organization" {
-  description = "GitHub organization to create repositories in"
-  type        = string
-}
-
-variable "repos_json" {
-  description = "Path to the JSON file containing repository information"
-  type        = string
-  default     = "terraform/repos.json"
-}
