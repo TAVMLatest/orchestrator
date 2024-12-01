@@ -12,7 +12,3 @@ resource "github_repository_file" "ga_workflow_main_updates" {
   commit_email        = local.commit_email
   overwrite_on_create = true
 }
-
-locals {
-  commit_email = "terraform@orchestrator.avmupgrades"
-}
