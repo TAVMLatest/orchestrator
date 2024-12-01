@@ -1,13 +1,10 @@
 name: AVMUpgrades - Updates to Main Branch
-
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * 1'  # Run weekly on Monday at 00:00 UTC
-
+    - cron: '0 0 * * 1' # Run weekly on Monday at 00:00 UTC
 permissions:
   contents: write
-
 jobs:
   update-main:
     runs-on: ubuntu-latest
@@ -17,17 +14,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod a+x /usr/local/bin/yq
+
       - name: Update dependabot.yml
         run: |
-          cat >> .github/dependabot.yml << EOL
-          - package-ecosystem: "terraform"
-            directory: "/"
-            schedule:
-              interval: "daily"
-            target-branch: "avmupgrades"
-            allow:
-              - dependency-type: "all"
-          EOL
+          yq e -i '.updates += [{"package-ecosystem": "terraform", "directory": "/", "schedule": {"interval": "daily"}, "target-branch": "avmupgrades", "allow": [{"dependency-type": "all"}]}]' .github/dependabot.yml
 
       - name: Find examples directories
         id: find_dirs
@@ -39,13 +33,7 @@ jobs:
         run: |
           DIRS='${{ steps.find_dirs.outputs.dirs }}'
           for dir in $(echo $DIRS | jq -r '.[]'); do
-            echo "  - package-ecosystem: \"terraform\"" >> .github/dependabot.yml
-            echo "    directory: \"$dir\"" >> .github/dependabot.yml
-            echo "    schedule:" >> .github/dependabot.yml
-            echo "      interval: \"daily\"" >> .github/dependabot.yml
-            echo "    target-branch: \"avmupgrades\"" >> .github/dependabot.yml
-            echo "    allow:" >> .github/dependabot.yml
-            echo "      - dependency-type: \"all\"" >> .github/dependabot.yml
+            yq e -i '.updates += {"package-ecosystem": "terraform", "directory": env(dir), "schedule": {"interval": "daily"}, "target-branch": "avmupgrades", "allow": [{"dependency-type": "all"}]}' .github/dependabot.yml
           done
 
       - name: Commit and push changes
