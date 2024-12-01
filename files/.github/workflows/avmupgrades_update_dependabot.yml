@@ -61,3 +61,4 @@ jobs:
           git add .github/dependabot.yml
           git commit -m "[AVMUpgrades] Update dependabot.yml" || echo "No changes to commit"
           git push origin main
+
