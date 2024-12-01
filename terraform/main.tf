@@ -5,7 +5,7 @@ resource "null_resource" "generate_repos_json" {
 }
 
 data "local_file" "repos" {
-  filename = var.repos_json
+  filename = "repos.json"
   depends_on = [null_resource.generate_repos_json]
 }
 
