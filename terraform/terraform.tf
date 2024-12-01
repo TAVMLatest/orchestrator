@@ -4,7 +4,7 @@ terraform {
   backend "azurerm" {
     resource_group_name   = "rg-gitopsiq-terraform-state"
     storage_account_name  = "sagitopsiqtfstate"
-    container_name        = "tavmlatest"
+    container_name        = "avmupgrades"
     key                   = "github-app-manager.tfstate"
     use_azuread_auth      = true
   }
