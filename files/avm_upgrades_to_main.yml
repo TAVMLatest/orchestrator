@@ -22,6 +22,16 @@ jobs:
           sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod a+x /usr/local/bin/yq
 
+      - name: Check tests folder and update dependabot.yml
+        run: |
+          if [ ! -d "tests" ] || [ -z "$(ls -A tests)" ]; then
+            echo "Tests folder is empty or doesn't exist. Updating dependabot.yml..."
+            yq eval 'del(.updates[] | select(.directory == "/tests"))' dependabot.yml > dependabot_updated.yml
+            mv dependabot_updated.yml dependabot.yml
+          else
+            echo "Tests folder exists and is not empty. No changes needed."
+          fi
+
       - name: Find examples directories
         id: find_dirs
         run: |
