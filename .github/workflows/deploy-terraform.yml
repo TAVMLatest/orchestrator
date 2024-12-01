@@ -22,9 +22,9 @@ env:
   ARM_TENANT_ID: "68ca7b3e-6aaf-4d07-8ce2-b70f507d8eb7"
   ARM_CLIENT_ID: "b86f6468-80d2-44cd-b6a9-7f9f60a91b17"
   ARM_SUBSCRIPTION_ID: "cc9a7c7a-00ae-4415-a75e-469866fc919e"
-  TF_VAR_github_app_id: ${{ vars.AVMUPGRADES_APP_ID }}
-  TF_VAR_github_app_private_key: ${{ vars.AVMUPGRADES_INSTALLATION_ID }}
-  TF_VAR_github_app_installation_id: ${{ secrets.AVMUPGRADES_PRIVATE_KEY }}
+  GITHUB_APP_ID: ${{ vars.AVMUPGRADES_APP_ID }}
+  GITHUB_APP_PEM_FILE: ${{ secrets.AVMUPGRADES_PRIVATE_KEY }}
+  GITHUB_APP_INSTALLATION_ID: ${{ vars.AVMUPGRADES_INSTALLATION_ID }}
   TF_VAR_organization: ${{ github.repository_owner }}
 
 permissions:
@@ -52,10 +52,6 @@ jobs:
           pip install pyjwt
           JWT_TOKEN=$(python scripts/generate_github_app_jwt.py)
           echo "TF_VAR_github_app_jwt_token=$JWT_TOKEN" >> $GITHUB_ENV
-        env:
-          GITHUB_APP_ID: ${{ vars.AVMUPGRADES_APP_ID }}
-          GITHUB_APP_PRIVATE_KEY: ${{ secrets.AVMUPGRADES_PRIVATE_KEY }}
-          GITHUB_APP_INSTALLATION_ID: ${{ vars.AVMUPGRADES_INSTALLATION_ID }}
 
       - name: Run populate_repos_json.sh
         run: ./scripts/populate_repos_json.sh

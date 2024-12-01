@@ -5,7 +5,7 @@ import jwt
 import requests
 
 # Ensure the required environment variables are set
-required_vars = ['GITHUB_APP_ID', 'GITHUB_APP_PRIVATE_KEY', 'GITHUB_APP_INSTALLATION_ID']
+required_vars = ['GITHUB_APP_ID', 'GITHUB_APP_PEM_FILE', 'GITHUB_APP_INSTALLATION_ID']
 for var in required_vars:
     if var not in os.environ:
         print(f"{var} environment variable must be set.")
@@ -18,7 +18,7 @@ payload = {
     'iss': os.environ['GITHUB_APP_ID']
 }
 
-private_key = os.environ['GITHUB_APP_PRIVATE_KEY']
+private_key = os.environ['GITHUB_APP_PEM_FILE']
 jwt_token = jwt.encode(payload, private_key, algorithm="RS256")
 
 # Use the JWT to get an installation token
