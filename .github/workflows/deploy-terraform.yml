@@ -38,7 +38,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ${{ env.TF_WORKING_DIR }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
@@ -51,7 +50,7 @@ jobs:
       - name: Generate GitHub App JWT
         run: |
           pip install pyjwt
-          JWT_TOKEN=$(python generate_github_app_jwt.py)
+          JWT_TOKEN=$(python scripts/generate_github_app_jwt.py)
           echo "TF_VAR_github_app_jwt_token=$JWT_TOKEN" >> $GITHUB_ENV
         env:
           GITHUB_APP_ID: ${{ vars.AVMUPGRADES_APP_ID }}
@@ -67,13 +66,16 @@ jobs:
           allow-no-subscriptions: true
 
       - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init
 
       - name: Terraform Plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
           terraform plan -out=tfplan
           cat tfplan
 
       - name: Terraform Apply
+        working-directory: ${{ env.TF_WORKING_DIR }}
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve tfplan
