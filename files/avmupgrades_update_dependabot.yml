@@ -1,4 +1,4 @@
-name: AVMUpgrades - Updates to Main Branch
+name: AVMUpgrades - Update dependabot.yml
 
 on:
   workflow_dispatch:
