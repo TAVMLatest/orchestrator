@@ -15,7 +15,7 @@ jobs:
 
     - name: List repositories
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ github.token }}
       run: gh repo list azure --json name --jq '.[] | select(.name | startswith("terraform-avm-")) | .name' > repos.txt
 
     - name: Generate a JWT token for my GitHub App with bash
