@@ -48,13 +48,15 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Generate GitHub App JWT Token
-        id: generate_jwt
+      - name: Generate GitHub App JWT
         run: |
-          GITHUB_APP_ID=${{ vars.AVMUPGRADES_APP_ID }}
-          GITHUB_APP_PRIVATE_KEY=${{ secrets.AVMUPGRADES_PRIVATE_KEY }}
-          JWT_TOKEN=$(./scripts/generate_github_app_jwt.sh)
+          pip install pyjwt
+          JWT_TOKEN=$(python generate_github_app_jwt.py)
           echo "TF_VAR_github_app_jwt_token=$JWT_TOKEN" >> $GITHUB_ENV
+        env:
+          GITHUB_APP_ID: ${{ vars.AVMUPGRADES_APP_ID }}
+          GITHUB_APP_PRIVATE_KEY: ${{ secrets.AVMUPGRADES_PRIVATE_KEY }}
+          GITHUB_APP_INSTALLATION_ID: ${{ vars.AVMUPGRADES_INSTALLATION_ID }}
 
       - name: Azure Login
         uses: azure/login@v2.1.1
