@@ -1,10 +1,13 @@
 name: AVMUpgrades - Updates to Main Branch
+
 on:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * 1' # Run weekly on Monday at 00:00 UTC
+
 permissions:
   contents: write
+
 jobs:
   update-main:
     runs-on: ubuntu-latest
@@ -19,13 +22,6 @@ jobs:
           sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod a+x /usr/local/bin/yq
 
-      - name: Update dependabot.yml with example directories
-        run: |
-          DIRS='${{ steps.find_dirs.outputs.dirs }}'
-          echo $DIRS | jq -r '.[]' | while read -r dir; do
-            yq e -i '.updates += {"package-ecosystem": "terraform", "directory": "'"$dir"'", "schedule": {"interval": "daily"}, "target-branch": "avmupgrades", "allow": [{"dependency-type": "all"}]}' .github/dependabot.yml
-          done
-
       - name: Find examples directories
         id: find_dirs
         run: |
@@ -35,8 +31,12 @@ jobs:
       - name: Update dependabot.yml with example directories
         run: |
           DIRS='${{ steps.find_dirs.outputs.dirs }}'
-          for dir in $(echo $DIRS | jq -r '.[]'); do
-            yq e -i '.updates += {"package-ecosystem": "terraform", "directory": env(dir), "schedule": {"interval": "daily"}, "target-branch": "avmupgrades", "allow": [{"dependency-type": "all"}]}' .github/dependabot.yml
+          echo "Directories found: $DIRS"
+          echo $DIRS | jq -r '.[]' | while read -r dir; do
+            echo "Processing directory: $dir"
+            yq e -i '.updates += {"package-ecosystem": "terraform", "directory": "'"$dir"'", "schedule": {"interval": "daily"}, "target-branch": "avmupgrades", "allow": [{"dependency-type": "all"}]}' .github/dependabot.yml
+            echo "Current state of .github/dependabot.yml:"
+            cat .github/dependabot.yml
           done
 
       - name: Commit and push changes
