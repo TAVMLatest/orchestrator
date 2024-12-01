@@ -13,15 +13,27 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Authenticate GitHub CLI
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh auth login --with-token $GITHUB_TOKEN
-
     - name: List repositories
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: gh repo list azure --json name --jq '.[] | select(.name | startswith("terraform-avm-")) | .name' > repos.txt
 
+    - name: Generate a JWT token for my GitHub App with bash
+      id: jwt
+      env:
+        PRIVATE_KEY: ${{ secrets.TAVMLATEST_ADMIN_PKEY }}
+        APP_ID: ${{ vars.TAVMLATEST_ADMIN_APPID }}
+        INSTALLATION_ID: ${{ vars.TAVMLATEST_ADMIN_INSTALLATIONID }}
+      run: |
+        header='{"alg":"RS256","typ":"JWT"}'
+        payload=$(jq -n --arg iat $(($(date +%s) - 60)) --arg exp $(($(date +%s) + 600)) --arg iss "${{ vars.TAVMLATEST_ADMIN_APPID }}" '{iat: $iat|tonumber, exp: $exp|tonumber, iss: $iss|tonumber}')
+        unsigned_token=$(echo -n "$header" | openssl base64 -e | tr -d '=' | tr '/+' '_-' | tr -d '\n').$(echo -n "$payload" | openssl base64 -e | tr -d '=' | tr '/+' '_-' | tr -d '\n')
+        signature=$(echo -n "$unsigned_token" | openssl dgst -sha256 -sign <(echo "${{ secrets.TAVMLATEST_ADMIN_PKEY }}" | base64 -d) | openssl base64 -e | tr -d '=' | tr '/+' '_-' | tr -d '\n')
+        echo "token=$unsigned_token.$signature" >> $GITHUB_ENV
+
     - name: Fork or update repositories
+      env:
+        GH_TOKEN: ${{ steps.jwt.outputs.token }}
       run: |
         while read repo; do
           if gh repo view ${{ github.repository_owner }}/$repo > /dev/null 2>&1; then
