@@ -5,7 +5,7 @@ locals {
 resource "github_repository_file" "ga_workflow_main_updates" {
   repository          = "terraform-azurerm-avm-res-documentdb-databaseaccount"
   branch              = "main"  # or whichever branch you want to add the file to
-  file                = file("${path.module}/../.github/workflows/avm_upgrades_to_main.yml")
+  file                = "${path.module}/../.github/workflows/avm_upgrades_to_main.yml"
   content             = file("${path.module}/../files/avm_upgrades_to_main.yml")
   commit_message      = "[AVMUpgrades] Add GitHub Action workflow to update main branch"
   commit_author       = "Terraform"
