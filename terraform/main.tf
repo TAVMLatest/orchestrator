@@ -8,6 +8,19 @@ locals {
   repos = { for repo in local.repos_list : repo.name => repo }
 }
 
+resource "github_repository" "repos" {
+  for_each = local.repos
+
+  name        = each.value.name
+  description = each.value.description
+  visibility  = "public"
+  auto_init   = true
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
 resource "null_resource" "create_forks" {
   for_each = local.repos
 
@@ -22,5 +35,7 @@ resource "null_resource" "create_forks" {
       GITHUB_APP_JWT_TOKEN = var.github_app_jwt_token
     }
   }
+
+  depends_on = [github_repository.repos]
 }
 
