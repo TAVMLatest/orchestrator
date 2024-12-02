@@ -4,15 +4,15 @@ set -e
 ORGANIZATION="avmupgrades"
 REPO_NAME=$1
 
-# Ensure GITHUB_APP_JWT_TOKEN is set
-if [ -z "$GITHUB_APP_JWT_TOKEN" ]; then
-    echo "Error: GITHUB_APP_JWT_TOKEN environment variable is not set."
+# Ensure GITHUB_TOKEN is set (changed from GITHUB_APP_JWT_TOKEN)
+if [ -z "$GITHUB_TOKEN" ]; then
+    echo "Error: GITHUB_TOKEN environment variable is not set."
     exit 1
 fi
 
 # Function to make API calls
 github_api_call() {
-    curl -s -H "Authorization: token $GITHUB_APP_JWT_TOKEN" \
+    curl -s -H "Authorization: token $GITHUB_TOKEN" \
          -H "Accept: application/vnd.github.v3+json" \
          "$@"
 }
@@ -50,10 +50,8 @@ else
     fi
 fi
 
-# Configure Dependabot for the repository
-echo "Configuring Dependabot for ${ORGANIZATION}/${REPO_NAME}..."
-
-# Enable Dependabot alerts and security updates
+# Enable Dependabot alerts
+echo "Enabling Dependabot alerts for ${ORGANIZATION}/${REPO_NAME}..."
 ALERTS_RESPONSE=$(github_api_call -X PUT \
     "https://api.github.com/repos/${ORGANIZATION}/${REPO_NAME}/vulnerability-alerts")
 
@@ -63,15 +61,30 @@ else
     echo "Failed to enable Dependabot alerts. Response: $ALERTS_RESPONSE"
 fi
 
-# Configure Dependabot version updates and grouped security updates
-CONFIG_RESPONSE=$(github_api_call -X PATCH \
-    "https://api.github.com/repos/${ORGANIZATION}/${REPO_NAME}/dependabot/configuration" \
-    -d '{"security_updates":true,"version_updates":true}')
+# Create dependabot.yml file
+echo "Creating dependabot.yml file for ${ORGANIZATION}/${REPO_NAME}..."
+DEPENDABOT_CONTENT=$(cat <<EOF
+version: 2
+updates:
+  - package-ecosystem: "terraform"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+EOF
+)
+
+# Encode the content to base64
+ENCODED_CONTENT=$(echo "$DEPENDABOT_CONTENT" | base64 -w 0)
+
+# Create or update dependabot.yml file
+FILE_RESPONSE=$(github_api_call -X PUT \
+    "https://api.github.com/repos/${ORGANIZATION}/${REPO_NAME}/contents/.github/dependabot.yml" \
+    -d "{\"message\":\"Create or update dependabot.yml\",\"content\":\"$ENCODED_CONTENT\",\"branch\":\"main\"}")
 
 if [ $? -eq 0 ]; then
-    echo "Dependabot configuration updated successfully."
+    echo "dependabot.yml file created or updated successfully."
 else
-    echo "Failed to update Dependabot configuration. Response: $CONFIG_RESPONSE"
+    echo "Failed to create or update dependabot.yml file. Response: $FILE_RESPONSE"
 fi
 
 echo "Dependabot configuration complete for ${ORGANIZATION}/${REPO_NAME}."
