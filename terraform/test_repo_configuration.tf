@@ -30,4 +30,6 @@ resource "github_repository_file" "terraform-azurerm-avm-res-documentdb-database
 resource "github_repository_dependabot_security_updates" "terraform-azurerm-avm-res-documentdb-databaseaccount" {
   repository  = github_repository.terraform-azurerm-avm-res-documentdb-databaseaccount.id
   enabled     = true
+
+  depends_on = [ github_repository_file.terraform-azurerm-avm-res-documentdb-databaseaccount ]
 }
