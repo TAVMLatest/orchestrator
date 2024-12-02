@@ -24,13 +24,13 @@ jobs:
 
       - name: Check tests folder and update dependabot.yml
         run: |
-          if [ ! -d "tests" ] || [ -z "$(ls -A tests)" ]; then
-            echo "Tests folder is empty or doesn't exist. Updating dependabot.yml..."
+          if [ -d "tests" ] && [ "$(find tests -mindepth 1 -type d -o -name '*.go' | wc -l)" -eq 0 ]; then
+            echo "Tests folder exists but contains no subdirectories or Go files. Updating dependabot.yml..."
             yq eval 'del(.updates[] | select(.directory == "/tests"))' .github/dependabot.yml > dependabot_updated.yml
             mv dependabot_updated.yml .github/dependabot.yml
             echo "CHANGES_MADE=true" >> $GITHUB_ENV
           else
-            echo "Tests folder exists and is not empty. No changes needed."
+            echo "Tests folder either doesn't exist, or contains subdirectories or Go files. No changes needed."
           fi
 
       - name: Find examples directories
