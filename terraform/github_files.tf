@@ -23,4 +23,6 @@ resource "github_repository_file" "ga_workflow_main_updates" {
   commit_author       = "Terraform"
   commit_email        = local.commit_email
   overwrite_on_create = true
+
+  depends_on = [ null_resource.create_forks ]
 }
