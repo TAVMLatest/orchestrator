@@ -25,7 +25,7 @@ resource "null_resource" "create_forks" {
   for_each = local.repos
 
   triggers = {
-    always_run = timestamp()
+    repo_name = each.value.name
   }
 
   provisioner "local-exec" {

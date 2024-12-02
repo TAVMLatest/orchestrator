@@ -1,0 +1,34 @@
+name: Update Forks
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # Runs every day at midnight UTC
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  update-forks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate GitHub App JWT token
+        run: |
+          export GITHUB_APP_JWT_TOKEN=$(python3 scripts/generate_github_app_jwt.py)
+          echo "GITHUB_APP_JWT_TOKEN=${GITHUB_APP_JWT_TOKEN}" >> $GITHUB_ENV
+
+      - name: Run create_update_forks.sh
+        run: |
+          chmod +x scripts/create_update_forks.sh
+          ./scripts/create_update_forks.sh
+        env:
+          GITHUB_APP_JWT_TOKEN: ${{ env.GITHUB_APP_JWT_TOKEN }}
