@@ -26,6 +26,14 @@ jobs:
           sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod a+x /usr/local/bin/yq
 
+      - name: Check if dependabot.yml exists
+        run: |
+          if [ ! -f .github/dependabot.yml ]; then
+            echo "dependabot.yml does not exist. Creating a new one..."
+            mkdir -p .github
+            echo "version: 2" > .github/dependabot.yml
+          fi
+
       - name: Check tests folder and update dependabot.yml
         run: |
           if [ -d "tests" ] && [ "$(find tests -mindepth 1 -type d -o -name '*.go' | wc -l)" -eq 0 ]; then
