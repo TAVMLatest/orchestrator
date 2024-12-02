@@ -3,7 +3,11 @@ name: AVMUpgrades - Update dependabot.yml
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * 1' # Run weekly on Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]   # Run weekly on Monday at 00:00 UTC
 
 permissions:
   contents: write
@@ -26,11 +30,15 @@ jobs:
         run: |
           if [ -d "tests" ] && [ "$(find tests -mindepth 1 -type d -o -name '*.go' | wc -l)" -eq 0 ]; then
             echo "Tests folder exists but contains no subdirectories or Go files. Updating dependabot.yml..."
+          else
+            echo "Tests folder either doesn't exist, or contains subdirectories or Go files. Updating dependabot.yml..."
+          fi
+          if yq e '.updates[] | select(.directory == "/tests")' .github/dependabot.yml | grep -q .; then
             yq eval 'del(.updates[] | select(.directory == "/tests"))' .github/dependabot.yml > dependabot_updated.yml
             mv dependabot_updated.yml .github/dependabot.yml
             echo "CHANGES_MADE=true" >> $GITHUB_ENV
           else
-            echo "Tests folder either doesn't exist, or contains subdirectories or Go files. No changes needed."
+            echo "No /tests entry found in dependabot.yml. No changes needed."
           fi
 
       - name: Find examples directories
