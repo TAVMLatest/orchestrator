@@ -15,6 +15,7 @@ on:
       - 'terraform/**'
       - 'scripts/**'
       - 'files/**'
+  workflow_dispatch:
 
 env:
   TF_WORKING_DIR: "./terraform"
