@@ -16,7 +16,6 @@ resource "github_repository" "repos" {
   visibility  = "public"
   auto_init   = true
   vulnerability_alerts = true
-  advanced_security = true
 
   lifecycle {
     prevent_destroy = true
