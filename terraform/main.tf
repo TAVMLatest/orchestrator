@@ -15,6 +15,7 @@ resource "github_repository" "repos" {
   description = each.value.description
   visibility  = "public"
   auto_init   = true
+  vulnerability_alerts = true
 
   lifecycle {
     prevent_destroy = true
