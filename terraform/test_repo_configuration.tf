@@ -10,10 +10,10 @@ locals {
     trimprefix(file, "files/") => filebase64("${local.files_path}/${file}")
   }
 
-  commit_email = "terraform@updatedfiles.devops"
+  commit_email = "terraform@avmupgrades.orchestrator"
 }
 
-resource "github_repository_file" "ga_workflow_main_updates" {
+resource "github_repository_file" "terraform-azurerm-avm-res-documentdb-databaseaccount" {
   for_each            = local.file_map
   repository          = "terraform-azurerm-avm-res-documentdb-databaseaccount"
   branch              = "main"
@@ -25,4 +25,9 @@ resource "github_repository_file" "ga_workflow_main_updates" {
   overwrite_on_create = true
 
   depends_on = [ null_resource.create_forks ]
+}
+
+resource "github_repository_dependabot_security_updates" "terraform-azurerm-avm-res-documentdb-databaseaccount" {
+  repository  = github_repository.terraform-azurerm-avm-res-documentdb-databaseaccount.id
+  enabled     = true
 }
